@@ -1,4 +1,4 @@
-# 🐧 Debian-termux-desktop
+# 🐧 Debian-termux-desktop.    v0.30
 
 A universal Linux desktop environment running inside Termux proot with automatic GPU detection, multiple DE support, VNC/TX11 switching, Wine, media players, photo editors, 3D games and Steam/Proton support.
 
