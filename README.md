@@ -150,7 +150,7 @@ bash install.sh
 ```
 
 Installer will ask you to choose:
-- 🐧 Distro — Debian / Ubuntu / Arch / Fedora
+- 🐧 Distro — Debian / Ubuntu / Arch / Fedora / Void
 - 🖥️ DE — XFCE / KDE / GNOME / MATE / LXQt / Openbox / i3wm / Cinnamon
 - 📺 Connection — TX11 / VNC
 - 🍷 Wine, 🎬 Media, 🖼️ Photo, 🎮 Games, 🎮 Steam+Proton
