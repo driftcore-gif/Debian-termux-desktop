@@ -17,7 +17,11 @@ echo ""
 # ─────────────────────────────────────────────
 echo "📦 [1/5] Installing Termux packages..."
 pkg update -y && pkg upgrade -y
+pkg install tur-repo 
+pkg install root-repo 
+pkg install x11-repo 
 pkg install -y proot-distro termux-x11-nightly virglrenderer-android pulseaudio wget curl git
+pkg update -y && pkg upgrade -y
 echo "✅ Termux packages installed"
 echo ""
 
@@ -36,6 +40,7 @@ case "$distro_num" in
   2) DISTRO="ubuntu" ;;
   3) DISTRO="archlinux" ;;
   4) DISTRO="fedora" ;;
+  5 ) DISTRO="void"
   *) DISTRO="debian" ;;
 esac
 echo "✅ Distro: $DISTRO"
