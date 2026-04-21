@@ -131,7 +131,7 @@ Debian-termux-desktop/
 
 ## 🚀 Quick Start
 ### 1 .install git
-'''bash
+```bash
 pkg install git
 
 ### 2 . Clone repo
