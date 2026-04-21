@@ -76,6 +76,7 @@ A universal Linux desktop environment running inside Termux proot with automatic
 | Ubuntu | ✅ Good compatibility |
 | Arch Linux | ⚡ Cutting edge |
 | Fedora | ⚠️ Heavier |
+| Void.  | 🚫 Not Tested 
 
 ---
 
