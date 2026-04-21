@@ -157,7 +157,7 @@ Installer will ask you to choose:
 
 ### 3. Run proot setup (once)
 ```bash
-proot-distro login debian --shared-tmp -- bash -c /data/data/com.termux/files/home/desktop/setup/debian-setup.sh
+bash /data/data/com.termux/files/home/desktop/setup/debian-setup.sh
 ```
 
 ### 4. Launch anytime
