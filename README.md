@@ -130,11 +130,13 @@ Debian-termux-desktop/
 ---
 
 ## 🚀 Quick Start
-### 1 .install git
+
+### 1.install git
 ```bash
 pkg install git
 
-### 2 . Clone repo
+
+### 2.Clone repo
 ```bash
 git clone https://github.com/driftcore-gif/Debian-termux-desktop.git ~/desktop
 cd ~/desktop
