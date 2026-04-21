@@ -1,0 +1,17 @@
+# === Proot Desktop Gaming ENV ===
+# Copy these into ~/.bashrc inside Debian proot
+
+export DISPLAY=:0
+export PULSE_SERVER=tcp:127.0.0.1
+export WINEDEBUG=-all
+export WINEPREFIX=~/.wine
+export mesa_glthread=true
+export MESA_NO_ERROR=1
+
+# DBus auto-start
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+  eval $(dbus-launch --sh-syntax)
+  export DBUS_SESSION_BUS_ADDRESS
+fi
+
+echo "🎮 Proot env loaded"

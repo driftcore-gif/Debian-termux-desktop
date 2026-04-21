@@ -1,0 +1,190 @@
+#!/bin/bash
+# tx11start — Universal Launcher
+# Supports: All GPUs | TX11 or VNC | All distros | All DEs
+
+echo "🚀 Booting Desktop..."
+
+# ─────────────────────────────────────────────
+# USER CONFIG — Edit these
+# ─────────────────────────────────────────────
+DISTRO="debian"           # debian | ubuntu | archlinux | fedora
+DE="xfce"                 # xfce | kde | gnome | mate | lxqt | openbox | i3wm | cinnamon
+CONNECTION="tx11"         # tx11 | vnc
+VNC_PORT="5901"           # only used if CONNECTION=vnc
+VNC_DISPLAY=":1"          # only used if CONNECTION=vnc
+# ─────────────────────────────────────────────
+
+# ─────────────────────────────────────────────
+# GPU Auto-Detection
+# ─────────────────────────────────────────────
+detect_gpu() {
+  local gpu
+  gpu=$(getprop ro.hardware.egl 2>/dev/null | tr '[:upper:]' '[:lower:]')
+  if echo "$gpu" | grep -qi "adreno"; then
+    echo "adreno"
+  elif echo "$gpu" | grep -qi "mali"; then
+    echo "mali"
+  else
+    local hw
+    hw=$(cat /proc/cpuinfo 2>/dev/null | grep -i "hardware" | tr '[:upper:]' '[:lower:]')
+    if echo "$hw" | grep -qi "qcom\|qualcomm\|snapdragon"; then
+      echo "adreno"
+    elif echo "$hw" | grep -qi "mali\|exynos\|mediatek\|dimensity\|helio"; then
+      echo "mali"
+    else
+      echo "others"
+    fi
+  fi
+}
+
+GPU=$(detect_gpu)
+echo "🔍 GPU: $GPU | DE: $DE | Distro: $DISTRO | Connection: $CONNECTION"
+
+# ─────────────────────────────────────────────
+# Kill old sessions
+# ─────────────────────────────────────────────
+pkill -f virgl_test_server 2>/dev/null
+pkill -f termux-x11 2>/dev/null
+pkill -f Xvnc 2>/dev/null
+pkill -f "$DE" 2>/dev/null
+sleep 1
+
+# ─────────────────────────────────────────────
+# GPU Driver Setup
+# ─────────────────────────────────────────────
+GPU_ENV=""
+case "$GPU" in
+  "adreno")
+    echo "⚡ Starting VirGL (Adreno)..."
+    MESA_NO_ERROR=1 \
+    MESA_GL_VERSION_OVERRIDE=4.3COMPAT \
+    MESA_GLES_VERSION_OVERRIDE=3.2 \
+    MESA_GLSL_VERSION_OVERRIDE=430 \
+    MESA_EXTENSION_OVERRIDE="+GL_EXT_shader_texture_lod" \
+    GALLIUM_DRIVER=virpipe \
+    virgl_test_server_android --angle-gl &
+    GPU_ENV="export GALLIUM_DRIVER=virpipe
+export MESA_NO_ERROR=1
+export MESA_GL_VERSION_OVERRIDE=4.3COMPAT
+export MESA_GLES_VERSION_OVERRIDE=3.2
+export LIBGL_DRI3_DISABLE=1
+export mesa_glthread=true
+export vblank_mode=0"
+    ;;
+  "mali")
+    echo "⚡ Starting VirGL (Mali)..."
+    MESA_NO_ERROR=1 \
+    MESA_GL_VERSION_OVERRIDE=4.3COMPAT \
+    MESA_GLES_VERSION_OVERRIDE=3.2 \
+    GALLIUM_DRIVER=virpipe \
+    virgl_test_server_android --angle-gl &
+    GPU_ENV="export GALLIUM_DRIVER=virpipe
+export MESA_NO_ERROR=1
+export MESA_GL_VERSION_OVERRIDE=4.3COMPAT
+export MESA_GLES_VERSION_OVERRIDE=3.2
+export MESA_VK_WSI_PRESENT_MODE=mailbox
+export MESA_VK_WSI_DEBUG=blit
+export LIBGL_DRI3_DISABLE=1
+export mesa_glthread=true
+export vblank_mode=0"
+    ;;
+  *)
+    echo "⚡ Starting VirGL (Generic)..."
+    MESA_NO_ERROR=1 \
+    MESA_GL_VERSION_OVERRIDE=4.0 \
+    GALLIUM_DRIVER=virpipe \
+    virgl_test_server_android &
+    GPU_ENV="export GALLIUM_DRIVER=virpipe
+export MESA_NO_ERROR=1
+export MESA_GL_VERSION_OVERRIDE=4.0
+export MESA_GLES_VERSION_OVERRIDE=3.2
+export mesa_glthread=true"
+    ;;
+esac
+sleep 1
+
+# ─────────────────────────────────────────────
+# Audio & Mic
+# ─────────────────────────────────────────────
+echo "🎙️ Setting up Audio & Mic..."
+pulseaudio --kill 2>/dev/null
+sleep 1
+if pulseaudio --start \
+  --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
+  --load="module-sles-source" \
+  --exit-idle-time=-1 2>/dev/null; then
+  echo "✅ Audio ready (module-sles-source)"
+elif pulseaudio --start \
+  --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
+  --load="module-aaudio-source" \
+  --exit-idle-time=-1 2>/dev/null; then
+  echo "✅ Audio ready (module-aaudio-source)"
+else
+  pulseaudio --start \
+    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
+    --exit-idle-time=-1 2>/dev/null
+  echo "⚠️ Audio started (no mic)"
+fi
+sleep 1
+
+# ─────────────────────────────────────────────
+# Connection Setup
+# ─────────────────────────────────────────────
+if [[ "$CONNECTION" == "tx11" ]]; then
+  echo "📺 Launching Termux:X11..."
+  am start --user 0 -n com.termux.x11/com.termux.x11.MainActivity 2>/dev/null
+  sleep 2
+  termux-x11 :0 -ac &
+  sleep 2
+  DISPLAY_VAR=":0"
+elif [[ "$CONNECTION" == "vnc" ]]; then
+  echo "🖥️ Starting VNC server on port $VNC_PORT..."
+  pkg install tigervnc -y 2>/dev/null
+  vncserver $VNC_DISPLAY -geometry 1280x720 -depth 24 -localhost 2>/dev/null || \
+  vncserver $VNC_DISPLAY -geometry 1280x720 -depth 24 2>/dev/null
+  sleep 2
+  DISPLAY_VAR="$VNC_DISPLAY"
+  echo "📱 Connect VNC viewer to: localhost:$VNC_PORT"
+fi
+
+# ─────────────────────────────────────────────
+# DE Start Command
+# ─────────────────────────────────────────────
+case "$DE" in
+  "xfce")      DE_CMD="startxfce4" ;;
+  "kde")       DE_CMD="startplasma-x11" ;;
+  "gnome")     DE_CMD="gnome-session" ;;
+  "mate")      DE_CMD="mate-session" ;;
+  "lxqt")      DE_CMD="startlxqt" ;;
+  "openbox")   DE_CMD="openbox-session" ;;
+  "i3wm")      DE_CMD="i3" ;;
+  "cinnamon")  DE_CMD="cinnamon-session" ;;
+  *)           DE_CMD="startxfce4" ;;
+esac
+
+# ─────────────────────────────────────────────
+# Launch Distro
+# ─────────────────────────────────────────────
+echo "🐧 Launching $DISTRO + $DE..."
+proot-distro login "$DISTRO" --shared-tmp -- bash -c "
+  export DISPLAY=${DISPLAY_VAR}
+  export PULSE_SERVER=tcp:127.0.0.1
+  export WINEDEBUG=-all
+  export WINEPREFIX=~/.wine
+
+  ${GPU_ENV}
+
+  mkdir -p /run/dbus
+  dbus-daemon --system --fork 2>/dev/null || true
+  sleep 1
+
+  if [ -z \"\$DBUS_SESSION_BUS_ADDRESS\" ]; then
+    eval \$(dbus-launch --sh-syntax)
+    export DBUS_SESSION_BUS_ADDRESS
+  fi
+
+  xfconf-query -c xfwm4 -p /general/use_compositing -s false 2>/dev/null
+
+  echo \"🎮 Desktop ready (GPU: ${GPU} | DE: ${DE} | Distro: ${DISTRO})\"
+  ${DE_CMD}
+"
