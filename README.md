@@ -157,8 +157,7 @@ Installer will ask you to choose:
 
 ### 3. Run proot setup (once)
 ```bash
-proot-distro login debian --shared-tmp
-bash ~/desktop/setup/debian-setup.sh
+proot-distro login debian --shared-tmp -- bash -c ~/desktop/setup/debian-setup.sh
 ```
 
 ### 4. Launch anytime
