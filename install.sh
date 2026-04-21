@@ -33,6 +33,7 @@ echo "  1) Debian (recommended)"
 echo "  2) Ubuntu"
 echo "  3) Arch Linux"
 echo "  4) Fedora"
+echo "  5) Void"
 read -r -p "Enter number [1]: " distro_num
 distro_num="${distro_num:-1}"
 case "$distro_num" in
@@ -40,7 +41,7 @@ case "$distro_num" in
   2) DISTRO="ubuntu" ;;
   3) DISTRO="archlinux" ;;
   4) DISTRO="fedora" ;;
-  5 ) DISTRO="void"
+  5) DISTRO="void" ;;
   *) DISTRO="debian" ;;
 esac
 echo "✅ Distro: $DISTRO"
