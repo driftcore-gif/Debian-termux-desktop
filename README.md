@@ -1,4 +1,4 @@
-# 🐧 Debian-termux-desktop.    v0.30
+# 🐧 Proot-termux-desktop.    v0.30
 
 A universal Linux desktop environment running inside Termux proot with automatic GPU detection, multiple DE support, VNC/TX11 switching, Wine, media players, photo editors, 3D games and Steam/Proton support.
 
@@ -21,11 +21,7 @@ A universal Linux desktop environment running inside Termux proot with automatic
 - ⚡ **VirGL acceleration** — Hardware accelerated rendering
 - 🖥️ **Multiple DEs** — XFCE, KDE, GNOME, MATE, LXQt, Openbox, i3wm, Cinnamon
 - 📺 **TX11 or VNC** — Choose your connection type
-- 🐧 **Multiple distros** — Debian, Ubuntu, Arch, Fedora
-- 🎮 **3D Linux games** — SuperTuxKart, Xonotic, OpenArena and more
-- 🎮 **Steam + Proton** — Run Windows games ⚠️ *Experimental*
-- 🍷 **Wine** — Run Windows apps ⚠️ *Experimental*
-- 🎨 **Custom themes** — Multiple XFCE styles ⚠️ *Experimental*
+- 🐧 **Multiple distros** — Debian, Ubuntu, Arch, Fedora , Void
 - 🎬 **Media players** — VLC + MPV
 - 🖼️ **Photo editors** — GIMP + Darktable
 - 🎙️ **Mic support** — Auto mic module fallback
@@ -86,9 +82,6 @@ A universal Linux desktop environment running inside Termux proot with automatic
 |---|---|
 | Media Player | VLC, MPV |
 | Photo Editor | GIMP, Darktable |
-| 3D Games | SuperTuxKart, Xonotic, OpenArena, Freedoom, ExtremeTuxRacer |
-| Windows compat | Wine + Winetricks ⚠️ |
-| Steam | Steam + Proton ⚠️ Experimental |
 | Terminal | XFCE Terminal / Konsole |
 | File manager | Thunar / Dolphin / Nemo |
 
@@ -100,13 +93,13 @@ A universal Linux desktop environment running inside Termux proot with automatic
 Debian-termux-desktop/
 ├── tx11start                        ← universal launcher
 ├── install.sh                       ← automated installer
-├── debian-setup.sh                  ← manual setup reference
+├── Proot-setup.sh                  ← manual setup reference
 ├── README.md
 ├── LICENSE
 ├── .gitignore
 │
 ├── setup/
-│   └── debian-setup.sh              ← one-time proot setup
+│   └── Proot-setup.sh              ← one-time proot setup
 │
 ├── configuration/
 │   ├── adreno/adreno.conf
@@ -118,9 +111,6 @@ Debian-termux-desktop/
 │   ├── gpu-acceleration.md
 │   ├── desktop-environments.md
 │   ├── connection-types.md
-│   ├── apps.md
-│   ├── wine.md
-│   ├── themes.md
 │   └── phantom-process-fix.md
 │
 └── other/
@@ -153,11 +143,11 @@ Installer will ask you to choose:
 - 🐧 Distro — Debian / Ubuntu / Arch / Fedora / Void
 - 🖥️ DE — XFCE / KDE / GNOME / MATE / LXQt / Openbox / i3wm / Cinnamon
 - 📺 Connection — TX11 / VNC
-- 🍷 Wine, 🎬 Media, 🖼️ Photo, 🎮 Games, 🎮 Steam+Proton
+- 🎬 Media, 🖼️ Photo,
 
 ### 3. Run proot setup (once)
 ```bash
-bash /data/data/com.termux/files/home/desktop/setup/debian-setup.sh
+bash /data/data/com.termux/files/home/desktop/setup/Proot-setup.sh
 ```
 
 ### 4. Launch anytime
@@ -183,9 +173,7 @@ tx11start
 - [GPU Acceleration](docs/gpu-acceleration.md)
 - [Desktop Environments](docs/desktop-environments.md)
 - [Connection Types](docs/connection-types.md)
-- [Apps — Media, Photo & Games](docs/apps.md)
-- [Wine (Experimental)](docs/wine.md)
-- [Themes (Experimental)](docs/themes.md)
+- [Apps — Media, Photo ](docs/apps.md)
 - [Phantom Process Fix](docs/phantom-process-fix.md)
 
 ---
@@ -195,9 +183,7 @@ tx11start
 - No real GPU passthrough — VirGL is a translation layer
 - Android 12+ may kill background processes — see phantom process fix
 - Systemd unavailable in proot — some warnings are normal
-- Wine, Steam and custom themes are experimental
 - KDE and GNOME need 6GB+ RAM
-- Heavy AAA games won't run well on any device
 
 ---
 
@@ -220,7 +206,6 @@ adb shell "device_config put activity_manager max_phantom_processes 2147483647"
 - [proot-distro](https://github.com/termux/proot-distro)
 - [Termux:X11](https://github.com/termux/termux-x11)
 - [VirGL Android](https://github.com/termux/termux-packages)
-- [sabamdarif/termux-desktop](https://github.com/sabamdarif/termux-desktop)
 
 ---
 
