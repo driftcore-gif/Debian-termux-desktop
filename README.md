@@ -1,6 +1,6 @@
-# 🐧 Proot-termux-desktop.    v0.30
+# 🐧 Proot-termux-desktop    v0.40
 
-A universal Linux desktop environment running inside Termux proot with automatic GPU detection, multiple DE support, VNC/TX11 switching, Wine, media players, photo editors, 3D games and Steam/Proton support.
+A universal Linux desktop environment running inside Termux proot with automatic GPU detection, multiple DE support, VNC/TX11 switching, Wine, media players, photo editors and 3D games.
 
 ---
 
@@ -11,17 +11,19 @@ A universal Linux desktop environment running inside Termux proot with automatic
 | RAM | 4GB |
 | Storage | 64GB |
 | Android | 8.0+ |
-| Chipset | Any (Snapdragon / Dimensity / Exynos / Helio) |
+| Chipset | Any (Snapdragon / Dimensity / Exynos / Helio / Rockchip) |
 
 ---
 
 ## ✨ Features
 
-- 🔍 **Auto GPU detection** — Adreno / Mali / Generic / No HWA
+- 🔍 **Auto GPU detection** — Adreno / Mali / NVIDIA / Intel / Rockchip / Generic
 - ⚡ **VirGL acceleration** — Hardware accelerated rendering
 - 🖥️ **Multiple DEs** — XFCE, KDE, GNOME, MATE, LXQt, Openbox, i3wm, Cinnamon
 - 📺 **TX11 or VNC** — Choose your connection type
-- 🐧 **Multiple distros** — Debian, Ubuntu, Arch, Fedora , Void
+- 🐧 **Multiple distros** — Debian, Ubuntu, Arch, Fedora, Void
+- 🎮 **3D Linux games** — SuperTuxKart, Neverball, Freedoom and more
+- 🍷 **Wine** — Run Windows apps ⚠️ *Experimental*
 - 🎬 **Media players** — VLC + MPV
 - 🖼️ **Photo editors** — GIMP + Darktable
 - 🎙️ **Mic support** — Auto mic module fallback
@@ -31,11 +33,14 @@ A universal Linux desktop environment running inside Termux proot with automatic
 
 ## 🔍 Supported GPUs
 
-| GPU | Chipset Examples | Driver |
+| GPU | Devices | Driver |
 |---|---|---|
 | Adreno | Snapdragon 4xx/6xx/7xx/8xx | VirGL + ANGLE |
 | Mali | Exynos / Dimensity / Helio | VirGL + ANGLE |
-| Others | Unknown / Generic | VirGL fallback |
+| NVIDIA | Tegra / Shield / Android x86 | VirGL + ANGLE |
+| Intel IGP | Android x86 / BlissOS / PrimeOS | VirGL + ANGLE |
+| Rockchip | TS6 / TS7 car players / RK3566/68 | VirGL + ANGLE |
+| Generic | Unknown / Others | VirGL fallback |
 | No HWA | Any | llvmpipe (slow) |
 
 ---
@@ -72,7 +77,7 @@ A universal Linux desktop environment running inside Termux proot with automatic
 | Ubuntu | ✅ Good compatibility |
 | Arch Linux | ⚡ Cutting edge |
 | Fedora | ⚠️ Heavier |
-| Void.  | 🚫 Not Tested 
+| Void | 🚫 Not Tested |
 
 ---
 
@@ -82,28 +87,36 @@ A universal Linux desktop environment running inside Termux proot with automatic
 |---|---|
 | Media Player | VLC, MPV |
 | Photo Editor | GIMP, Darktable |
+| 3D Games | SuperTuxKart, Neverball, Freedoom, ExtremeTuxRacer |
+| Wine | Wine + Winetricks ⚠️ |
 | Terminal | XFCE Terminal / Konsole |
-| File manager | Thunar / Dolphin / Nemo |
+| File Manager | Thunar / Dolphin / Nemo |
 
 ---
 
 ## 📂 Repo Structure
 
 ```
-Debian-termux-desktop/
+Proot-termux-desktop/
 ├── tx11start                        ← universal launcher
-├── install.sh                       ← automated installer
-├── Proot-setup.sh                  ← manual setup reference
+├── install.sh                       ← Termux side setup (minimal)
 ├── README.md
 ├── LICENSE
 ├── .gitignore
 │
 ├── setup/
-│   └── Proot-setup.sh              ← one-time proot setup
+│   ├── debian-setup.sh              ← Debian proot setup
+│   ├── ubuntu-setup.sh              ← Ubuntu proot setup
+│   ├── archlinux-setup.sh           ← Arch Linux proot setup
+│   ├── fedora-setup.sh              ← Fedora proot setup
+│   └── void-setup.sh                ← Void Linux proot setup
 │
 ├── configuration/
 │   ├── adreno/adreno.conf
 │   ├── mali/mali.conf
+│   ├── nvidia/nvidia.conf
+│   ├── intel/intel.conf
+│   ├── rockchip/rockchip.conf
 │   ├── others/others.conf
 │   └── nohwa/nohwa.conf
 │
@@ -111,6 +124,7 @@ Debian-termux-desktop/
 │   ├── gpu-acceleration.md
 │   ├── desktop-environments.md
 │   ├── connection-types.md
+│   ├── apps.md
 │   └── phantom-process-fix.md
 │
 └── other/
@@ -122,35 +136,38 @@ Debian-termux-desktop/
 
 ## 🚀 Quick Start
 
-### 1.install git
+### 1. Install git and clone repo
 ```bash
-pkg install git
-
-
-### 2.Clone repo
-```bash
+pkg install git -y
 git clone https://github.com/driftcore-gif/Debian-termux-desktop.git ~/desktop
 cd ~/desktop
 chmod +x install.sh
 ```
 
-### 2. Run installer (interactive)
+### 2. Run Termux installer
 ```bash
 bash install.sh
 ```
 
-Installer will ask you to choose:
-- 🐧 Distro — Debian / Ubuntu / Arch / Fedora / Void
-- 🖥️ DE — XFCE / KDE / GNOME / MATE / LXQt / Openbox / i3wm / Cinnamon
+Installer will ask:
 - 📺 Connection — TX11 / VNC
-- 🎬 Media, 🖼️ Photo,
 
-### 3. Run proot setup (once)
+### 3. Install proot distro
 ```bash
-bash /data/data/com.termux/files/home/desktop/setup/Proot-setup.sh
+proot-distro install $DISTRO
 ```
 
-### 4. Launch anytime
+### 4. Run proot setup (inside proot)
+```bash
+proot-distro login $DISTRO --shared-tmp
+bash -c~/desktop/setup/$DISTRO-setup.sh
+``
+
+Proot setup will ask:
+- 🖥️ DE — XFCE / KDE / GNOME / MATE / LXQt / Openbox / i3wm / Cinnamon
+- 🍷 Wine, 🎬 Media, 🖼️ Photo, 🎮 Games
+
+### 5. Launch anytime
 ```bash
 tx11start
 ```
@@ -173,7 +190,7 @@ tx11start
 - [GPU Acceleration](docs/gpu-acceleration.md)
 - [Desktop Environments](docs/desktop-environments.md)
 - [Connection Types](docs/connection-types.md)
-- [Apps — Media, Photo ](docs/apps.md)
+- [Apps — Media, Photo & Games](docs/apps.md)
 - [Phantom Process Fix](docs/phantom-process-fix.md)
 
 ---
@@ -184,6 +201,7 @@ tx11start
 - Android 12+ may kill background processes — see phantom process fix
 - Systemd unavailable in proot — some warnings are normal
 - KDE and GNOME need 6GB+ RAM
+- Heavy AAA games won't run well on any device
 
 ---
 
