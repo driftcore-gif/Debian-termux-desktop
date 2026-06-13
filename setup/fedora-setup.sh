@@ -2,6 +2,11 @@
 # Fedora setup — Run inside proot
 
 dnf install -y dialog 2>/dev/null
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Date     : $(date)"
+echo "  Script   : fedora-setup.sh"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 TMP=$(mktemp); TMP2=$(mktemp)
 
 dialog --title "Proot-termux-desktop v0.40" --msgbox "\nFedora Proot Setup" 7 40

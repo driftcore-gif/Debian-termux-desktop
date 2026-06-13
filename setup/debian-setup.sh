@@ -4,6 +4,11 @@
 # bash ~/desktop/setup/debian-setup.sh
 
 apt install -y dialog 2>/dev/null
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Date     : $(date)"
+echo "  Script   : debian-setup.sh"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 TMP=$(mktemp)
 TMP2=$(mktemp)
 

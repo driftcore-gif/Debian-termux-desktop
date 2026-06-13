@@ -2,6 +2,11 @@
 # Arch Linux setup — Run inside proot
 
 pacman -S --noconfirm dialog 2>/dev/null
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Date     : $(date)"
+echo "  Script   : archlinux-setup.sh"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 TMP=$(mktemp); TMP2=$(mktemp)
 
 dialog --title "Proot-termux-desktop v0.40" --msgbox "\nArch Linux Proot Setup" 7 40

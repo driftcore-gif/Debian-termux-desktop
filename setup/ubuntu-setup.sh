@@ -2,6 +2,11 @@
 # Ubuntu setup — Run inside proot
 
 apt install -y dialog 2>/dev/null
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Date     : $(date)"
+echo "  Script   : ubuntu-setup.sh"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 TMP=$(mktemp); TMP2=$(mktemp)
 
 dialog --title "Proot-termux-desktop v0.40" --msgbox "\nUbuntu Proot Setup" 7 40

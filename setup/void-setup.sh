@@ -2,6 +2,11 @@
 # Void Linux setup — Run inside proot
 
 xbps-install -y dialog 2>/dev/null
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  Date     : $(date)"
+echo "  Script   : void-setup.sh"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 TMP=$(mktemp); TMP2=$(mktemp)
 
 dialog --title "Proot-termux-desktop v0.40" --msgbox "\nVoid Linux Proot Setup\n\n⚠️ Void is not officially tested." 9 45
